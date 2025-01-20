@@ -1,24 +1,7 @@
 import json
-import time
-
 from faker import Faker
 
 fake = Faker()
-
-def retrier(attempts=5, delay=1):
-    def decorator(function):
-        def wrapper(*args, **kwargs):
-            for count in range(attempts):
-                print(f"Попытка получения токена номер {count}")
-                token = function(*args, **kwargs)
-                if token:
-                    return token
-                time.sleep(delay)
-            raise AttributeError("Превышено количество попыток получения активационного токена!")
-        return wrapper
-    return decorator
-
-
 
 class AccountHelper:
     def __init__(self, dm_api_facade, mailhog_facade):
@@ -57,7 +40,6 @@ class AccountHelper:
         )
         assert response.status_code == 201, f"Не удалось зарегистрировать пользователя {login}"
 
-    @retrier(attempts=3, delay=2)
     def get_registration_token(self, login: str) -> str:
         """
         Получение токена активации из почты
